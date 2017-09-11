@@ -1,0 +1,23 @@
+---
+ - name: edit hosts file
+   template: src=hosts.j2 dest=/etc/hosts mode=0644 owner=root group=root
+
+ - name: Upgrade
+   apt: upgrade=dist update_cache=yes
+
+ - name: Install GleSYS packages
+   action: apt pkg={{ item }} state=present
+   with_items:
+   - curl
+   - locate
+   - locales-all
+   - git-core
+   - at
+   - vim
+   - htop
+   - apache2
+
+ - name: locales preed
+   debconf: name=locales question='locales/default_environment_locale' vtype='select' value='en_US.UTF-8'
+   notify:
+   - dpkg-reconfigure-locales
